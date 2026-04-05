@@ -27,18 +27,37 @@ Confirmar devolución </button>
 
   <script>
     function enviar() {
+      const carnet = document.getElementById("carnet").value.trim();
+
+      // Validación simple en frontend
+      if (!/^\d{4}$/.test(carnet)) {
+        alert("❌ El carnet debe tener exactamente 4 dígitos");
+        return;
+      }
+
       fetch("/accion", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ tipo: "devolver" })
+        body: JSON.stringify({ 
+          tipo: "devolver",
+          carnet: carnet
+        })
       })
       .then(res => res.json())
-      .then(() => alert("✅ Paño devuelto"))
-      .catch(() => alert("❌ Error"));
-    }
+      .then(data => {
+        if (data.error) {
+          alert("❌ " + data.error);
+        } else {
+          alert("✅ Paño devuelto correctamente");
+          document.getElementById("carnet").value = "";
+        }
+      })
+      .catch(() => alert("❌ Error de conexión con el servidor"));
+    }a
   </script>
 
 </body>
 </html>
+

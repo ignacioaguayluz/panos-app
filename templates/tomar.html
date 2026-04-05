@@ -26,17 +26,28 @@ Confirmar entrega</button>
 
   <script>
     function enviar() {
+      const carnet = document.getElementById("carnet").value;
+
       fetch("/accion", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ tipo: "tomar" })
+        body: JSON.stringify({ 
+          tipo: "tomar",
+          carnet: carnet
+        })
       })
       .then(res => res.json())
-      .then(() => alert("✅ Paño entregado"))
+      .then(data => {
+        if (data.error) {
+          alert("❌ " + data.error);
+        } else {
+          alert("✅ Paño entregado");
+        }
+      })
       .catch(() => alert("❌ Error"));
-    }
+  }
   </script>
 
 </body>

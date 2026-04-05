@@ -5,6 +5,9 @@ import os
 from datetime import datetime
 import json
 import re
+from zoneinfo import ZoneInfo
+
+
 app = Flask(__name__)
 port = int(os.environ.get("PORT", 10000))
 
@@ -46,7 +49,7 @@ def accion():
         data = request.json
         tipo = data.get("tipo") # "entregar" o "recibir"
         carnet = data.get("carnet", "").strip()
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now(ZoneInfo("America/Costa_Rica")).strftime("%Y-%m-%d %H:%M:%S")
 
         if not re.fullmatch(r"\d{4}", carnet):
             return jsonify({"error": "Carnet inválido. Debe tener exactamente 4 dígitos"}), 400
