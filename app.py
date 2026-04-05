@@ -7,17 +7,25 @@ import json
 app = Flask(__name__)
 port = int(os.environ.get("PORT", 10000))
 
-scope = [
-"https://www.googleapis.com/auth/spreadsheets",
-"https://www.googleapis.com/auth/drive"
-]
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-creds = Credentials.from_service_account_file(
-os.path.join(BASE_DIR, "credentials.json"),
-scopes=scope
-)
-client = gspread.authorize(creds)
-sheet = client.open_by_key("1720qM4F1TVsNS81JMOnwQ0juOhhgAHUnCJhYzRSpKHE").sheet1
+def get_sheet():
+    try:
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+
+        creds = Credentials.from_service_account_info(
+            json.loads(os.environ["GOOGLE_CREDS"]),
+            scopes=scope
+        )
+
+        client = gspread.authorize(creds)
+        return client.open_by_key("1720qM4F1TVsNS81JMOnwQ0juOhhgAHUnCJhYzRSpKHE").sheet1
+
+    except Exception as e:
+        print("Error conectando con Google Sheets:", e)
+        return None
+
 
 @app.route("/")
 def home():
@@ -45,7 +53,12 @@ def accion():
         else:
             return jsonify({"error": "Tipo inválido"}), 400
 
-        sheet.append_row(row)
+        sheet = get_sheet()
+
+        if sheet:
+            sheet.append_row(row)
+        else:
+            print("No se pudo conectar a Google Sheets")
 
         return jsonify({"message": "ok"})
 
