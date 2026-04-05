@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 import json
 app = Flask(__name__)
-port = int(os.environ.get("PORT", 5000))
+port = int(os.environ.get("PORT", 10000))
 
 scope = [
 "https://www.googleapis.com/auth/spreadsheets",
@@ -53,4 +53,4 @@ def accion():
         return jsonify({"error": str(e)}), 500
     
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=port)
