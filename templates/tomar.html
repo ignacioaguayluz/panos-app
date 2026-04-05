@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tomar Paño</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 flex flex-col items-center justify-center min-h-screen">
+
+  <h1 class="text-3xl font-bold mb-6">Tomar Paño</h1>
+
+<button onclick="enviar()" 
+       class="bg-green-600 text-white px-8 py-4 rounded-xl shadow-lg hover:scale-105 transition">
+Confirmar entrega</button>
+
+
+  <script>
+    function enviar() {
+      fetch("/accion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ tipo: "tomar" })
+      })
+      .then(res => res.json())
+      .then(() => alert("✅ Paño entregado"))
+      .catch(() => alert("❌ Error"));
+    }
+  </script>
+
+</body>
+</html>
