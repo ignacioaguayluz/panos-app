@@ -4,6 +4,7 @@ import gspread
 import os
 from datetime import datetime
 import json
+import re
 app = Flask(__name__)
 port = int(os.environ.get("PORT", 10000))
 
@@ -44,12 +45,16 @@ def accion():
     try:
         data = request.json
         tipo = data.get("tipo") # "entregar" o "recibir"
+        carnet = data.get("carnet", "").strip()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        if not re.fullmatch(r"\d{4}", carnet):
+            return jsonify({"error": "Carnet inválido. Debe tener exactamente 4 dígitos"}), 400
+
         if tipo == "tomar":
-            row = [timestamp, "Se dio un paño", "-"]
+            row = [timestamp, f"{carnet} Recibió un paño", "-"]
         elif tipo == "devolver":
-            row = [timestamp, "-", "Se devolvio un paño"]
+            row = [timestamp, "-", f"{carnet} Devolvió un paño"]
         else:
             return jsonify({"error": "Tipo inválido"}), 400
 
